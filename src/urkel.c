@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <urkel.h>
+#include "urkel.h"
 
 /*
  * Helpers

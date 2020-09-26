@@ -13,23 +13,23 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\sqlite">
-      <UniqueIdentifier>{127836f0-9943-4e28-b1d8-51a6a2cc7f00}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\PyABI">
       <UniqueIdentifier>{27762bed-5a81-4768-bec4-27a8d6ff3419}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\PyABI\Header Files">
       <UniqueIdentifier>{b7ce25cb-6ebf-495c-b872-0c70053a604b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ttmath">
+    <Filter Include="Source Files\liburkle">
+      <UniqueIdentifier>{a1e69c19-4607-4d1d-abfb-331cfec721c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PyABI\sqlite">
+      <UniqueIdentifier>{127836f0-9943-4e28-b1d8-51a6a2cc7f00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PyABI\ttmath">
       <UniqueIdentifier>{1cccc7af-4222-4218-85fa-fdc0ed6e9360}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\PyABI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\PyABI_body.hpp">
       <Filter>Source Files\PyABI</Filter>
     </ClCompile>
@@ -40,7 +40,37 @@
       <Filter>Source Files\PyABI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\depends\sqlite3.c">
-      <Filter>Source Files\sqlite</Filter>
+      <Filter>Source Files\PyABI\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PyABI_URKLE.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\bits.c">
+      <Filter>Source Files\liburkle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\blake2b.c">
+      <Filter>Source Files\liburkle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\internal.c">
+      <Filter>Source Files\liburkle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\nodes.c">
+      <Filter>Source Files\liburkle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\proof.c">
+      <Filter>Source Files\liburkle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\store.c">
+      <Filter>Source Files\liburkle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tree.c">
+      <Filter>Source Files\liburkle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util.c">
+      <Filter>Source Files\liburkle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\io.c">
+      <Filter>Source Files\liburkle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -49,9 +79,6 @@
     </ClInclude>
     <ClInclude Include="..\..\sqlite3ext.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\PyABI.hpp">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\PyABI_header.hpp">
       <Filter>Source Files\PyABI\Header Files</Filter>
@@ -78,37 +105,40 @@
       <Filter>Source Files\PyABI\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmath.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathbig.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathdec.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathint.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathmisc.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathobjects.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathparser.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmaththreads.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathtypes.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathuint.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ttmathuint_noasm.h">
-      <Filter>Source Files\ttmath</Filter>
+      <Filter>Source Files\PyABI\ttmath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PyABI_URKLE.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

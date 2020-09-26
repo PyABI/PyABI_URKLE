@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <urkel.h>
+#include "urkel.h"
 #include "bits.h"
 #include "internal.h"
 #include "proof.h"

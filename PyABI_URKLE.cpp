@@ -1,6 +1,6 @@
 /***
 
-Python PyABI C++ Sepcification
+PyABI_URKLE; a PyAPI module implementing https://github.com/chjj/liburkel 
 
 ***/
 
@@ -56,13 +56,134 @@ auto PyABI_threads = std::thread::hardware_concurrency();
 
 auto PyABI_threads = 4;
 
-#include "PyABI.hpp"
+#include "PyABI_URKLE.hpp"
 
 #include "PyABI_singleton.hpp"
 
-//static Singleton::Instance = Singleton();
-
 #include "PyABI_body.hpp"
+
+
+/*
+ * Helpers
+ */
+
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+ /*
+  * Base16
+  */
+
+static const char* urkel_base16_charset = "0123456789abcdef";
+
+static const int8_t urkel_base16_table[256] = {
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+   0,  1,  2,  3,  4,  5,  6,  7,
+   8,  9, -1, -1, -1, -1, -1, -1,
+  -1, 10, 11, 12, 13, 14, 15, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, 10, 11, 12, 13, 14, 15, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1
+};
+
+static void
+urkel_base16_encode(char* dst, const uint8_t* src, size_t srclen) {
+  size_t i, j;
+
+  for (i = 0, j = 0; i < srclen; i++) {
+    dst[j++] = urkel_base16_charset[src[i] >> 4];
+    dst[j++] = urkel_base16_charset[src[i] & 15];
+  }
+
+  dst[j] = '\0';
+}
+
+static int
+urkel_base16_decode(uint8_t* dst, size_t* dstlen, const char* src) {
+  size_t srclen = strlen(src);
+  uint8_t z = 0;
+  size_t i, j;
+
+  if (srclen & 1)
+    return 0;
+
+  if (srclen / 2 > * dstlen)
+    return 0;
+
+  for (i = 0, j = 0; i < srclen / 2; i++) {
+    uint8_t hi = urkel_base16_table[(uint8_t)src[j++]];
+    uint8_t lo = urkel_base16_table[(uint8_t)src[j++]];
+
+    z |= hi | lo;
+
+    dst[i] = (hi << 4) | lo;
+  }
+
+  if (z & 0x80)
+    return 0;
+
+  *dstlen = i;
+
+  return 1;
+}
+
+static int
+urkel_base16_decode32(uint8_t* dst, const char* src) {
+  size_t dstlen = 32;
+
+  if (!urkel_base16_decode(dst, &dstlen, src))
+    return 0;
+
+  return dstlen == 32;
+}
+
+static void
+urkel_base16_print(const uint8_t* src, size_t srclen) {
+  char tmp[1024 + 1];
+  char* dst = tmp;
+
+  if (srclen > 512) {
+    dst = (char*)malloc(srclen * 2 + 1);
+
+    if (dst == NULL) {
+      abort();
+      return;
+    }
+  }
+
+  urkel_base16_encode(dst, src, srclen);
+
+  printf("%s\n", dst);
+
+  if (dst != tmp)
+    free(dst);
+}
+
+
 
 // Module method definitions
 static PyObject* hello_world(PyObject* module, PyObject* args, PyObject* kwargs) {
@@ -105,7 +226,7 @@ static PyObject* hello_world(PyObject* module, PyObject* args, PyObject* kwargs)
 }
 
 
-static PyObject* hello(PyObject* module, PyObject* args, PyObject* kwargs) {
+static PyObject* hash(PyObject* module, PyObject* args, PyObject* kwargs) {
   const char* name;
   if (!PyArg_ParseTuple(args, "s", &name)) {
     return NULL;
@@ -129,108 +250,41 @@ static PyObject* hello(PyObject* module, PyObject* args, PyObject* kwargs) {
   return Py_None;
 }
 
-static PyMethodDef abi_methods[] = {
-    {
-        "hello_world", (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS,
-        "Print 'hello world' from a method defined in a C extension."
-    },
-    {
-        "hello", (PyCFunction)hello, METH_VARARGS | METH_KEYWORDS,
-        "Print 'hello xxx' from a method defined in a C extension."
-    },
+/***
+
+
+***/
+
+static PyMethodDef urkle_methods[] = {
+    { "create",    (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "create a new database" },
+    { "destroy",   (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "destroy database" },
+    { "info",      (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "print database information" },
+    { "root",      (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "print root hash" },
+    { "get",       (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "retrieve value <key>" },
+    { "insert",    (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "insert value <key> <value>" },
+    { "remove",    (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "remove value <key>" },
+    { "list",      (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "list all keys <key>" },
+    { "prove",     (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "create proof <key> <proof>" },
+    { "verify",    (PyCFunction)hello_world, METH_VARARGS | METH_KEYWORDS, "verify proof **kwarg=root" },
+    { "hash",      (PyCFunction)hash,        METH_VARARGS | METH_KEYWORDS, "hash key with BLAKE2b-256" },
     {NULL, NULL, 0, NULL}
 };
 
 static struct PyModuleDef abi_definition = {
     PyModuleDef_HEAD_INIT,
-    "PyABI_pyd",
-    "PyABI C++",
+    "PyABI_URKLE_pyd",
+    "PyABI C++ Implimiation of https://github.com/chjj/liburkel",
     -1,
-    abi_methods
+    urkle_methods
 };
 
-PyMODINIT_FUNC PyInit_PyABI_pyd(void) {
+PyMODINIT_FUNC PyInit_PyABI_URKLE_pyd(void) {
   Py_Initialize();
   return PyModule_Create(&abi_definition);
 }
 
-// Create some work to test the Thread Pool
-void spitId()
-{
-  std::cout << "thread #" << std::this_thread::get_id() << '\n';
-}
-
-void sayAndNoReturn()
-{
-  auto tid = std::this_thread::get_id();
-  std::cout << "thread #" << tid << "says " << " and returns... ";
-  std::cout << typeid(tid).name() << '\n';    // std::thread::id
-}
-
-char sayWhat(int arg)
-{
-  auto tid = std::this_thread::get_id();
-  std::stringstream sid;
-  sid << tid;
-  int id = std::stoi(sid.str());
-  std::cout << "\nthread #" << id << " says " << arg << " and returns... ";
-  if (id > 7000)
-    return 'X';
-  return 'a';
-}
-
-struct Member
-{
-  int i_ = 4;
-  void sayCheese(int i)
-  {
-    std::cout << "CHEESEE!" << '\n';
-    std::cout << i + i_ << '\n';
-  }
-};
-
-int vv() { puts("nothing"); return 0; }
-int vs(const std::string& str) { puts(str.c_str()); return 0; }
-
-
 int main(int argc, char** argv) {
 
-  ThreadPool threadPool{ std::thread::hardware_concurrency() };
-
-  threadPool.enqueue(spitId);
-  threadPool.enqueue(&spitId);
-  threadPool.enqueue(sayAndNoReturn);
-
-  auto f1 = threadPool.enqueue([]() -> int
-    {
-      std::cout << "lambda 1\n";
-      return 1;
-    });
-
-  //auto sayWhatRet = threadPool.enqueue(sayWhat, 100);
-  //std::cout << sayWhatRet.get() << '\n';
-
-  Member member{ 1 };
-  threadPool.enqueue(std::bind(&Member::sayCheese, member, 100));
-
-  std::cout << f1.get() << '\n';
-
-  auto f2 = threadPool.enqueue([]()
-    {
-      std::cout << "lambda 2\n";
-      return 2;
-    });
-  auto f3 = threadPool.enqueue([]()
-    {
-      return sayWhat(100);
-    });
-
-  //threadPool.enqueue(std::function<void(int)>{Member{}.sayCheese(100)});
-
-  std::cout << "f1 type = " << typeid(f2).name() << '\n';
-
-  std::cout << f2.get() << '\n';
-  std::cout << f3.get() << '\n';
 
   return EXIT_SUCCESS;
 

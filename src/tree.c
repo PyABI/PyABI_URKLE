@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <urkel.h>
+#include "urkel.h"
 #include "bits.h"
 #include "internal.h"
 #include "io.h"
