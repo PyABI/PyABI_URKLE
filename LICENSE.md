@@ -1,6 +1,8 @@
 MIT License
 
-Copyright (c) 2020 Intermine.com.au Pty Ltd
+Copyright (c) 2020, Scott McCallum (https github.com scott91e1)
+
+Copyright (c) 2020, Christopher Jeffrey (https://github.com/chjj)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
